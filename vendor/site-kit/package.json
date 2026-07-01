@@ -1,0 +1,48 @@
+{
+  "name": "@extracom/site-kit",
+  "version": "0.1.0",
+  "description": "SDK verrouillé des sites Extracom : types, client API, broker BFF et primitives commerce. Seule voie d'accès au métier Extracom depuis un site. Artefact pré-buildé (vendored) — voir packages/site-kit dans le monorepo extracom pour les sources.",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./server": {
+      "types": "./dist/server.d.ts",
+      "import": "./dist/server.mjs",
+      "require": "./dist/server.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.mjs",
+      "require": "./dist/react.js"
+    }
+  },
+  "files": [
+    "dist",
+    "AGENT-MANUAL.md"
+  ],
+  "dependencies": {
+    "zod": "^3.25.75"
+  },
+  "peerDependencies": {
+    "next": ">=14",
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "next": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
+  }
+}

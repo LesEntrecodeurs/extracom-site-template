@@ -1,0 +1,47 @@
+{
+  "name": "extracom-site-template",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Template de site e-commerce Extracom (édité par l'agent Mantly). Consomme @extracom/site-kit (SDK verrouillé, vendored). app/ et components/site/ sont la surface éditable ; le câblage du kit est verrouillé.",
+  "scripts": {
+    "dev": "next dev -H 0.0.0.0 -p 3001",
+    "build": "next build",
+    "start": "next start -H 0.0.0.0 -p 3001",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@extracom/site-kit": "file:./vendor/site-kit",
+    "@hookform/resolvers": "5.1.1",
+    "@tanstack/react-table": "8.21.2",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "cmdk": "1.0.4",
+    "date-fns": "4.1.0",
+    "embla-carousel-autoplay": "8.6.0",
+    "embla-carousel-react": "8.6.0",
+    "framer-motion": "12.40.0",
+    "input-otp": "1.4.2",
+    "lucide-react": "0.542.0",
+    "next": "^15.0.0",
+    "next-themes": "0.4.6",
+    "radix-ui": "1.4.3",
+    "react": "^19.0.0",
+    "react-day-picker": "9.7.0",
+    "react-dom": "^19.0.0",
+    "react-hook-form": "7.58.1",
+    "sonner": "2.0.5",
+    "tailwind-merge": "3.2.0",
+    "vaul": "1.1.2",
+    "zod": "3.25.75"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.5",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "postcss": "^8.4.0",
+    "tailwindcss": "^4.1.5",
+    "tw-animate-css": "1.4.0",
+    "typescript": "^5.7.3"
+  }
+}
