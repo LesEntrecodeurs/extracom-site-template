@@ -4,7 +4,7 @@
   "private": true,
   "packageManager": "npm@11.16.0",
   "engines": {
-    "node": ">=20 <25"
+    "node": ">=20"
   },
   "description": "Template de site e-commerce Extracom (édité par l'agent Mantly). Consomme @extracom/site-kit (SDK verrouillé, vendored). app/ et components/site/ sont la surface éditable ; le câblage du kit est verrouillé.",
   "scripts": {

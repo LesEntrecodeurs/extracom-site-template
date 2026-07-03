@@ -96,8 +96,11 @@ seules garde-fous sont **par chemin** (jamais `.git/**`, `.env*`, lockfiles,
 
 Règles complètes pour l'agent (rôle, frontières, règles dures) :
 [`AGENTS.md`](./AGENTS.md). Inventaire détaillé (composants, librairies, SEO/GEO,
-patterns réutilisables) : [`TOOLBOX.md`](./TOOLBOX.md). Référence des fonctions
-du kit : [`vendor/site-kit/AGENT-MANUAL.md`](./vendor/site-kit/AGENT-MANUAL.md)
+patterns réutilisables) : [`TOOLBOX.md`](./TOOLBOX.md). Cadrage d'édition des pages
+(règles éditoriales transversales, fiche gabarit par type de page, référence SEO/GEO
+complète) : [`docs/`](./docs) — `PRINCIPES.md`, `SEO-GEO.md`, `templates/pages/`,
+`fiches/` (état réel des pages). Référence des fonctions du kit :
+[`vendor/site-kit/AGENT-MANUAL.md`](./vendor/site-kit/AGENT-MANUAL.md)
 (générée depuis les types du kit).
 
 ## Développement local
@@ -121,7 +124,7 @@ En local, ce site attend une API Extracom accessible (par défaut
 | `EXTRACOM_SHOP` | Shop ambiant (un site = un shop), doit exister côté Sage. |
 | `EXTRACOM_SESSION_SECRET` | Secret AES-256-GCM du cookie de session brokerée (`openssl rand -base64 32`). |
 | `NEXT_PUBLIC_SITE_URL` | URL publique du site (metadata, OG, sitemap, retour paiement). |
-| `EXTRACOM_MEDIA_HOST` / `EXTRACOM_MEDIA_PROTOCOL` | Host + protocole des images produit (doit matcher `images.url` de l'API). |
+| `EXTRACOM_MEDIA_HOST` / `EXTRACOM_MEDIA_PROTOCOL` | Host + protocole des images produit — l'API les sert via son propre proxy public (`…/storefront/media/:filename`), donc c'est le **même host que `EXTRACOM_API_URL`** (sans protocole). |
 
 Ce sont les seules variables server-only nécessaires ; aucune n'est préfixée
 `NEXT_PUBLIC_` (sauf `NEXT_PUBLIC_SITE_URL`) — le navigateur ne connaît jamais
@@ -131,10 +134,11 @@ session) : [`.env.example`](./.env.example).
 ## Repo layout
 
 ```
-app/                pages, layouts, routes — surface ÉDITABLE
+app/                pages, layouts, routes — surface ÉDITABLE (dont robots/sitemap/llms/OG)
 components/site/    composants de site — surface ÉDITABLE
 components/ui/      shadcn pré-baké (compose, ne réécris pas)
-lib/                seo, utils
+lib/                seo (URL + metadata + helpers JSON-LD), utils
+docs/               cadrage d'édition : PRINCIPES.md, SEO-GEO.md, templates/pages/, fiches/
 vendor/site-kit/     @extracom/site-kit pré-buildé (verrouillé)
 AGENTS.md            règles pour l'agent d'édition (à lire en premier, côté agent)
 TOOLBOX.md           inventaire détaillé (composants, libs, SEO/GEO, patterns)
