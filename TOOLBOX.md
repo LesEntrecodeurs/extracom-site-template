@@ -167,6 +167,14 @@ disperse pas de couleurs en dur dans les composants — réfère ces variables
 (`text-[var(--brand-dark)]`, `bg-[var(--brand-light)]`…). Pour un thème
 clair/sombre, `next-themes` est dans l'allowlist.
 
+**Typographie** : les tokens `--font-display` / `--font-body` (mêmes bloc éditable
+de `globals.css`) partent sur des piles système. Pour une identité forte, **toute
+Google Font** est permise via `next/font/google` (intégré à Next, **aucune dépendance
+à installer**) : importe-la dans `app/layout.tsx`, expose sa CSS variable et branche-la
+sur ces tokens — Next l'**auto-héberge au build** (zéro requête runtime, RGPD-safe).
+**Pas** de `<link>`/`@import` vers `fonts.googleapis.com` ni de `.woff2` téléchargé
+à la main (cf. `AGENTS.md` §4).
+
 ## Composants & sections d'exemple (à réutiliser / s'inspirer)
 
 `components/site/` contient des patterns prêts — réutilise-les plutôt que de
@@ -197,6 +205,94 @@ L'accueil (`app/page.tsx`) montre hero + value props (icônes lucide) + carrouse
 catégories + CTA. `app/contact` mêle coordonnées statiques (à personnaliser) et un
 formulaire de ticket support (`ContactForm`, connecté) ; `app/mentions-legales`
 est un **stub statique à personnaliser** (infos légales).
+
+## Cadrage des pages (`docs/`)
+
+Le dossier `docs/` porte le **cadrage éditorial** (complément d'`AGENTS.md` §7) :
+
+- **`docs/PRINCIPES.md`** — règles transversales (mobile-first, FAQ, voix hybride,
+  ~1000 mots, qualité de code, synchronisation/propagation).
+- **`docs/templates/pages/`** — une **fiche gabarit par type de page** (structure,
+  wireframe, **données kit consommées**, **réglages shop/droits conditionnels**,
+  SEO, JSON-LD). `_base-page.md` = socle ; sous-dossier `conditionnelles/` = pages
+  vitrine ajoutables (à-propos, blog, glossaire, FAQ, page générique).
+- **`docs/fiches/`** — l'**état réel** de chaque page, tenu à jour à chaque édition.
+- **`docs/SEO-GEO.md`** — référence complète SEO + GEO (metadata, matrice JSON-LD,
+  helpers `lib/seo.ts`, robots/sitemap/llms.txt, GEO answer-first, checklist).
+  Rappel : les fichiers de référencement (robots, sitemap, opengraph, llms.txt,
+  `lib/seo.ts`, `generateMetadata`) sont **dans ta surface éditable** (cf. `AGENTS.md` §2).
+
+**Réflexe** : avant d'éditer/créer une page, lis sa fiche gabarit ; après, mets à
+jour `docs/fiches/`.
+
+## Matrice JSON-LD par type de page
+
+Chaque page porte les schémas de son type, injectés via `<JsonLd data={…} />`
+(jamais de `dangerouslySetInnerHTML` manuel). `price`/`availability` sur `Product`
+**uniquement si un prix est exposé**.
+
+| Type de page | JSON-LD |
+|---|---|
+| Accueil | `WebSite`, `Organization`, `LocalBusiness` (si adresse physique) |
+| Catalogue (liste) | `WebPage`, `BreadcrumbList`, `ItemList` (ou `OfferCatalog`) |
+| Produit (détail) | `WebPage`, `BreadcrumbList`, `Product`, `FAQPage` si bloc FAQ |
+| Contact | `WebPage`, `BreadcrumbList`, `ContactPage`, `FAQPage` |
+| À propos | `WebPage`, `BreadcrumbList` |
+| FAQ (page) | `WebPage`, `BreadcrumbList`, `FAQPage` |
+| Blog (liste) | `WebPage`, `BreadcrumbList`, `ItemList` |
+| Blog (article) | `WebPage`, `BreadcrumbList`, `Article` |
+| Glossaire (liste) | `WebPage`, `BreadcrumbList` |
+| Glossaire (terme) | `WebPage`, `BreadcrumbList`, `DefinedTerm` |
+| Compte / Panier / Commande / Auth | `WebPage` (pages `noindex`) |
+| Mentions légales / Confidentialité | `WebPage`, `BreadcrumbList` |
+
+Toute page avec un **bloc FAQ** ajoute `FAQPage`. Helpers centralisés (ex. `lib/seo.ts`).
+
+## Glossaire + tooltips (optionnel, recommandé en B2B)
+
+Utile pour le jargon métier/technique. Système complet (cf.
+`docs/templates/pages/conditionnelles/glossaire.md`) : données `data/glossary.ts`
+(`GlossaryTerm`), page index `/glossaire` (recherche + A-Z), pages `/glossaire/[slug]`
+(`generateStaticParams`, `DefinedTerm`), tooltips auto via `linkifyGlossaryTerms()`
+(`lib/linkify.tsx`) + composant `GlossaryTooltip` dans `components/site/`. Appliquer
+`linkifyGlossaryTerms` **aux paragraphes de contenu uniquement** (jamais titres,
+boutons, labels UI, ni zones transactionnelles). Aliases dans `TERM_ALIASES`.
+
+## Qualité de code (appliquée à toute édition)
+
+- **Composants réutilisables** : tout pattern présent sur 2 pages ou plus →
+  composant partagé dans `components/site/` ; les données (Q/R, copy, listes) dans
+  `data/*.ts`, **pas** hardcodées dans le composant.
+- **Fichiers < 200 lignes** (cible ; les fichiers de **données pures** comme
+  `data/glossary.ts` ou `data/blog/*` peuvent dépasser). Au-delà → découper.
+- **Pas de commentaires** : code auto-documenté (noms explicites). Exceptions rares :
+  contrainte cachée (bug externe), invariant métier subtil. Pas de commentaires
+  paraphrase / section / TODO / référence de ticket.
+- Ne **pas** sur-découper : un fichier cohérent de 180 lignes vaut mieux que 3 de 60.
+
+## Créer une nouvelle page (autorisé)
+
+`app/` est ta **surface éditable** : tu **peux créer de nouvelles routes/pages** à la
+demande (une page service, un guide, une landing, une rubrique…). Ce n'est pas
+verrouillé — seuls le kit, `package.json` et `vendor/` le sont.
+
+Marche à suivre :
+
+1. Choisir le **type** (`editorial` / `transactionnel` / `legal`) et partir de la
+   fiche gabarit la plus proche dans `docs/templates/pages/` — sinon
+   `conditionnelles/page-generique.md`.
+2. Créer la route `app/<slug>/page.tsx` (rendu **serveur** si indexable),
+   `generateMetadata` (title sans nom de marque, description, canonical).
+3. Commerce éventuel → **hooks/actions du kit** uniquement (jamais de `fetch`).
+4. **Propager** (obligatoire, cf. `docs/PRINCIPES.md` §9) : ajouter à la navigation
+   (`Nav`/footer), au `sitemap.ts` (si indexable), au JSON-LD `BreadcrumbList`, à
+   `app/llms.txt` si la page est importante, et mailler depuis/vers les pages liées.
+5. Appliquer les règles `editorial` si indexable (FAQ, voix hybride, ~1000 mots, JSON-LD).
+6. Créer la fiche d'état dans `docs/fiches/<slug>.md`.
+
+Ne jamais créer une page **sans l'exposer dans la navigation**, ni en dupliquant un
+pattern qui existe déjà (réutilise `components/site/*`). Si la page exige une lib
+absente de l'allowlist → **le dire à l'utilisateur**, ne pas l'installer.
 
 ---
 

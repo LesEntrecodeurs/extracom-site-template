@@ -19,10 +19,10 @@
   --brand-dark: #0f6e56;
   --brand-light: #e1f5ee;
 
-  /* Typo (éditable). Display = serif éditorial (caractère, sans réseau ni
-     dépendance RGPD) ; corps = sans système clean. Pour une vraie identité,
-     l'agent peut self-héberger une famille (public/fonts + @font-face) et
-     remplacer ces piles. */
+  /* Typo (éditable). Piles système par défaut. Pour une vraie identité, brancher
+     une Google Font via next/font/google dans layout.tsx (auto-hébergée au build,
+     sans réseau runtime ni RGPD) et remplacer ces piles par sa CSS variable.
+     Pas de <link> CDN ni de .woff2 manuel. */
   --font-display:
     ui-serif, 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua',
     Georgia, serif;

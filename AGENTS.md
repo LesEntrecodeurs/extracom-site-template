@@ -40,14 +40,22 @@ puis il **publie**. Concrètement pour toi :
 | ✅ Éditable (ta surface)                                    | ⛔ Verrouillé (ne pas toucher)                                  |
 | ----------------------------------------------------------- | --------------------------------------------------------------- |
 | `app/` — pages, layouts, routes                             | `@extracom/site-kit` (dans `node_modules`, lecture seule) |
-| `components/site/` — composants de site                     | `next.config.mjs`, le câblage BFF/auth                          |
-| `app/globals.css` — thème (`--brand`, `--brand-dark`, `--brand-light`, `--font-display`, `--font-body`) | `package.json`, lockfile, `vendor/` (kit vendored)              |
-| `public/` — images, favicon                                 | `.env`, secrets, tokens                                         |
-| Contenu, textes, structure visuelle                         | Tout ce qui crée une URL réseau directe                         |
+| **Référencement** : `app/robots.ts`, `app/sitemap.ts`, `app/opengraph-image.tsx`/`twitter-image.tsx`, `app/llms.txt/route.ts`, `generateMetadata` de chaque page | `next.config.mjs`, le câblage BFF/auth |
+| `lib/seo.ts` — helpers SEO/GEO (metadata, URL, JSON-LD)     | `package.json`, lockfile, `vendor/` (kit vendored)              |
+| `components/site/` — composants de site (dont `JsonLd`)     | `.env`, secrets, tokens                                         |
+| `app/globals.css` — thème (`--brand`, `--brand-dark`, `--brand-light`, `--font-display`, `--font-body`) | Tout ce qui crée une URL réseau directe |
+| `public/` — images, favicon · Contenu, textes, structure visuelle | — |
 
 La frontière est **physique** : la logique commerce vit dans le kit installé en
 `node_module` — tu ne peux pas l'ouvrir ni la redéfinir, seulement **appeler**
 ses fonctions/hooks. Un gate de build refuse toute édition hors de ta surface.
+
+**Référencement (SEO/GEO) — entièrement éditable.** Tous les fichiers ci-dessus
+liés au référencement font partie de ta surface : tu **dois** pouvoir les modifier
+(métadonnées, `robots.ts`, `sitemap.ts`, `llms.txt`, images OG, helpers `lib/seo.ts`,
+JSON-LD). Détail : `docs/SEO-GEO.md`. Seule exception verrouillée : `next.config.mjs`
+(hosts d'images, `redirects`/`headers`) — si un besoin SEO l'exige (ex. redirection
+301), **demande à l'utilisateur**, ne l'édite pas toi-même.
 
 ## 3. Règles dures (à ne JAMAIS enfreindre)
 
@@ -121,8 +129,19 @@ re-bootstrapper :
 - **Tokens de thème** dans `app/globals.css` (zone « THÈME DE LA VITRINE — ZONE
   ÉDITABLE ») : `--brand`, `--brand-dark`, `--brand-light`, `--font-display`,
   `--font-body`.
-- Fonts par **pile système** (pas de dépendance réseau) — tu peux self-héberger
-  une famille (`public/fonts` + `@font-face`) si demandé.
+- **Fonts** : pile système par défaut. Pour une vraie identité, **toutes les Google
+  Fonts sont permises via `next/font/google`** (intégré à Next, **aucune dépendance
+  à ajouter**) : Next télécharge et **auto-héberge** la police au build → zéro
+  requête runtime, RGPD-safe. Wiring : importer la font dans `app/layout.tsx`,
+  exposer sa CSS variable et la brancher sur `--font-display` / `--font-body`
+  (`app/globals.css`).
+  **Interdits** : `<link>`/`@import` vers `fonts.googleapis.com` (réseau runtime) et
+  le **téléchargement manuel** de fichiers de police (`.woff2` dans `public/fonts` +
+  `@font-face`). Toujours passer par `next/font`.
+  Le build Mantly a accès réseau, donc `next/font/google` (fetch au build) fonctionne.
+  **Fallback** : toujours déclarer une pile système de secours dans `--font-display` /
+  `--font-body` (ex. `var(--font-xxx), ui-sans-serif, system-ui, sans-serif`) pour que
+  le rendu tienne même si le fetch de police échoue au build.
 - Connexion à l'API : gérée par le kit (server-to-server), **invisible** pour toi.
 
 ### Commandes (vérifie ton travail)
@@ -144,6 +163,11 @@ a11y et l'absence de fuite (token, URL interne). Un build cassé **bloque le pub
   librairies allowlistées, gestion des images, SEO, thème, composants d'exemple
   `components/site/` (ArticleCard, BuyBox, CategoryMenu, InfoBanner, EmptyState…).
   **Lis-le** pour ne pas réinventer ce qui existe.
+- **`docs/`** — cadrage d'édition : `docs/PRINCIPES.md` (règles éditoriales
+  transversales, cf. §7 ci-dessous), `docs/templates/pages/` (fiche gabarit par
+  type de page : structure, données kit, réglages conditionnels, SEO, JSON-LD),
+  `docs/fiches/` (état réel des pages, tenu à jour à chaque édition). **Avant
+  d'éditer une page, lis sa fiche gabarit** — elle t'évite de partir en roue libre.
 - **`vendor/site-kit/AGENT-MANUAL.md`** (ou `node_modules/@extracom/site-kit/AGENT-MANUAL.md`,
   identique) — référence générée des fonctions/hooks du kit (signatures + doc).
 - **`components/site/`** — patterns prêts à réutiliser (catalogue, produit,
@@ -168,7 +192,36 @@ components/ui/            shadcn pré-baké (compose, ne réécris pas)
 lib/                      seo, utils (cn)
 ```
 
-## 7. En cas de doute
+## 7. Règles éditoriales transversales (pages indexables)
+
+Au-delà du commerce et du SEO/GEO (§3, dont la règle dure 8), ces règles cadrent
+**le contenu et la mise en page** pour rester cohérent d'un prompt à l'autre. Détail complet et
+exemples : **`docs/PRINCIPES.md`**. Elles s'appliquent selon le **type de page**
+(`editorial` / `transactionnel` / `legal` — voir `docs/templates/pages/_base-page.md`) :
+
+1. **Fiche d'abord.** Avant d'éditer une page, ouvre sa fiche gabarit
+   (`docs/templates/pages/…`) ; après l'édition, mets à jour son état dans
+   `docs/fiches/` (règle de synchronisation, `docs/PRINCIPES.md` §9).
+2. **Mobile-first** systématique (base = 375px, breakpoints `sm:→md:→lg:`).
+3. **FAQ obligatoire** sur les pages `editorial` indexables : 3-6 Q/R
+   contextuelles, questions en 3e personne + nom de marque, réponses answer-first
+   (40-60 mots) + lien interne si le sujet est traité ailleurs → JSON-LD `FAQPage`.
+   **Pas** de FAQ sur les pages transactionnelles (compte, panier, checkout, auth).
+4. **Voix hybride** (GEO + CRO) : FAQ/blocs de contenu ancrés sur le nom de marque
+   (`useShopContext().data.branding.name`) en 1re phrase, puis « nous » ; hero, CTA,
+   nav en 1re personne. (Tableau détaillé dans `docs/PRINCIPES.md` §7.)
+5. **Contenu ~1000 mots** (cible non bloquante) sur les pages `editorial` : sous le
+   seuil, **le signaler** et proposer d'enrichir — ne **jamais inventer** de faits.
+6. **Qualité de code** : composants réutilisables dans `components/site/` (données
+   dans `data/*.ts`), fichiers **< 200 lignes** (data pure exceptée), **pas de
+   commentaires** (sauf hack externe ou invariant métier subtil).
+7. **Matrice JSON-LD par type de page** : voir `TOOLBOX.md`. Chaque page porte les
+   schémas de son type, via le composant `JsonLd`.
+
+Ces règles ne priment jamais sur les **règles dures** du §3 (surface verrouillée,
+commerce = kit, `price` nullable, dépendances figées, sécurité du rendu).
+
+## 8. En cas de doute
 
 - Un besoin exige une dépendance absente ou contredit un réglage shop →
   **demande à l'utilisateur**, ne contourne pas.
