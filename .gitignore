@@ -1,6 +1,11 @@
 # dependencies
 /node_modules
 
+# yarn — projet npm : ne pas versionner les artefacts yarn (PnP incompatible)
+.pnp.*
+.yarn/
+yarn.lock
+
 # next.js
 /.next
 /out
