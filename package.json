@@ -2,6 +2,7 @@
   "name": "extracom-site-template",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "npm@11.16.0",
   "description": "Template de site e-commerce Extracom (édité par l'agent Mantly). Consomme @extracom/site-kit (SDK verrouillé, vendored). app/ et components/site/ sont la surface éditable ; le câblage du kit est verrouillé.",
   "scripts": {
     "dev": "next dev -H 0.0.0.0 -p 3001",
