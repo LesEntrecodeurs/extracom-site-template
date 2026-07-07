@@ -205,10 +205,11 @@ function CommandeContent() {
       <section className="mt-6 space-y-3">
         <h2 className="font-medium">Informations complémentaires</h2>
         <div>
-          <label className="text-sm text-neutral-600">
+          <label htmlFor="commande-reference" className="text-sm text-neutral-600">
             Référence de commande
           </label>
           <input
+            id="commande-reference"
             value={reference}
             onChange={(e) => setReference(e.target.value)}
             placeholder="Votre référence (bon de commande…)"
@@ -216,8 +217,11 @@ function CommandeContent() {
           />
         </div>
         <div>
-          <label className="text-sm text-neutral-600">Commentaire</label>
+          <label htmlFor="commande-comment" className="text-sm text-neutral-600">
+            Commentaire
+          </label>
           <textarea
+            id="commande-comment"
             value={comment}
             onChange={(e) => setCommentValue(e.target.value.slice(0, 69))}
             placeholder="Note pour la préparation (69 caractères max)"

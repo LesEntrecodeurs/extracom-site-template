@@ -110,6 +110,7 @@ npm install          # installe les deps + le kit vendored (file:./vendor/site-k
 npm run dev          # dev server (HMR) sur http://localhost:3001, bind 0.0.0.0
 npm run build        # build de prod (tsc + next build) — le gate de publication
 npm run typecheck    # tsc --noEmit
+npm run lint         # Biome — bloque fetch/axios/XHR direct et dangerouslySetInnerHTML
 ```
 
 Copier `.env.example` → `.env` et renseigner les variables (voir ci-dessous).

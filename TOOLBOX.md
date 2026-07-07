@@ -260,6 +260,11 @@ boutons, labels UI, ni zones transactionnelles). Aliases dans `TERM_ALIASES`.
 
 ## Qualité de code (appliquée à toute édition)
 
+- **`npm run lint`** (Biome) doit passer avant de considérer une tâche finie —
+  voir `AGENTS.md` §4. Il bloque mécaniquement `fetch`/`axios`/`XMLHttpRequest`
+  hors du kit et `dangerouslySetInnerHTML` (sauf `JsonLd.tsx`). Il ne couvre pas
+  les règles ci-dessous (composants réutilisables, taille de fichier, commentaires) :
+  celles-ci restent à appliquer toi-même à chaque édition.
 - **Composants réutilisables** : tout pattern présent sur 2 pages ou plus →
   composant partagé dans `components/site/` ; les données (Q/R, copy, listes) dans
   `data/*.ts`, **pas** hardcodées dans le composant.

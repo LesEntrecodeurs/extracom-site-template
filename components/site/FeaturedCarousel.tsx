@@ -20,6 +20,7 @@ export function FeaturedCarousel({ items }: { items: ReactNode[] }) {
       <CarouselContent className="-ml-4">
         {items.map((item, i) => (
           <CarouselItem
+            // biome-ignore lint/suspicious/noArrayIndexKey: items sont des ReactNode opaques (pas d'id exploitable)
             key={i}
             className="basis-3/4 pl-4 sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
           >

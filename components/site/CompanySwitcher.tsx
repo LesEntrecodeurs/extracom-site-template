@@ -21,8 +21,11 @@ export function CompanySwitcher() {
 
   return (
     <div className="card p-3">
-      <label className="text-xs font-medium text-neutral-500">Société</label>
+      <label htmlFor="company-switcher" className="text-xs font-medium text-neutral-500">
+        Société
+      </label>
       <select
+        id="company-switcher"
         className="field mt-1 w-full truncate"
         value={activeId ?? ''}
         disabled={isSwitching}

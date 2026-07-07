@@ -63,6 +63,7 @@ export default function DocumentPage({
 
       <ul className="card mt-4 divide-y divide-neutral-100 text-sm">
         {doc.lines.map((l, i) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: référence produit non garantie unique sur la commande
           <li key={`${l.reference}-${i}`} className="flex justify-between p-3">
             <span>
               {l.label ?? l.reference} × {l.quantity}

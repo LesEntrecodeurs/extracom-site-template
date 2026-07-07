@@ -168,9 +168,9 @@ export default async function ProduitPage({
         {/* Contenu enrichi (glossaires) */}
         {article.glossaires
           ?.filter((g) => g.text?.trim())
-          .map((g, i) => (
+          .map((g) => (
             <p
-              key={i}
+              key={g.text}
               className="mt-4 text-sm whitespace-pre-line text-neutral-600"
             >
               {g.text}
@@ -183,7 +183,7 @@ export default async function ProduitPage({
             <h2 className="text-sm font-medium text-neutral-700">Documents</h2>
             <ul className="mt-2 space-y-1">
               {article.specSheets.map((url, i) => (
-                <li key={i}>
+                <li key={url}>
                   <a
                     href={url}
                     target="_blank"

@@ -63,7 +63,9 @@ JSON-LD). Détail : `docs/SEO-GEO.md`. Seule exception verrouillée : `next.conf
    commande, paiement, auth, documents) passe par les **fonctions serveur**
    (`@extracom/site-kit/server`) ou les **hooks** (`@extracom/site-kit/react`).
    **Jamais** de `fetch`/`axios`/`XMLHttpRequest` vers une URL — tu n'as pas les
-   URLs et c'est interdit (gate de lint). Référence des fonctions :
+   URLs et c'est **interdit mécaniquement** : `npm run lint` (Biome,
+   `noRestrictedGlobals`/`noRestrictedImports` dans `biome.json`) échoue si ce
+   code apparaît hors de `vendor/site-kit`. Référence des fonctions :
    **`node_modules/@extracom/site-kit/AGENT-MANUAL.md`** (généré, à jour).
 2. **`price` peut être `null`** (visiteur anonyme + shop en prix masqué). Gère
    **toujours** ce cas (« Connectez-vous pour voir le tarif »), ne masque pas le
@@ -100,7 +102,10 @@ JSON-LD). Détail : `docs/SEO-GEO.md`. Seule exception verrouillée : `next.conf
    change le réglage, pas toi).
 7. **Sécurité du rendu** : jamais de `dangerouslySetInnerHTML` ni de `<script>`
    inline (contenu Sage = potentiellement non fiable → échappé par défaut).
-   Données structurées via le composant `JsonLd`, pas à la main.
+   Données structurées via le composant `JsonLd`, pas à la main. Règle
+   **interdite mécaniquement** par `npm run lint` (`security.noDangerouslySetInnerHtml`
+   dans `biome.json`) partout **sauf** `components/site/JsonLd.tsx` (seule exception
+   documentée : y sérialise du JSON contrôlé, pas du HTML utilisateur).
 8. **SEO ET GEO — deux cibles, à préserver** (détail + checklists : TOOLBOX) :
    - **SEO** (Google/Bing) : `generateMetadata` (title unique + description +
      canonical) sur chaque page indexable, **rendu serveur** des pages publiques
@@ -150,12 +155,18 @@ re-bootstrapper :
 npm run dev         # serveur de dev (HMR) — port 3001, bind 0.0.0.0
 npm run build       # build de prod (= ce que le gate vérifie : tsc + next build)
 npm run typecheck   # tsc --noEmit
+npm run lint        # Biome — bloque fetch/axios/XHR direct + dangerouslySetInnerHTML (règles dures §3.1/§3.7)
 ```
 
-Avant de considérer une tâche finie : `npm run build` doit passer (typecheck +
-compilation). La **publication est déclenchée par le propriétaire depuis Mantly**
-(pas par toi) ; son pipeline rejoue ce gate et vérifie en plus SEO/GEO, perf,
-a11y et l'absence de fuite (token, URL interne). Un build cassé **bloque le publish**.
+Avant de considérer une tâche finie : `npm run build` **et** `npm run lint`
+doivent passer. `lint` porte sur `app/`, `components/site/`, `lib/` (ta surface
+éditable) — `components/ui/` (pré-baké) et `vendor/` en sont exclus, ne les modifie
+pas pour « corriger » un lint. La **publication est déclenchée par le propriétaire
+depuis Mantly** (pas par toi) ; son pipeline rejoue le build. Les contrôles
+SEO/GEO/perf/a11y/fuites côté Mantly ne sont pas garantis exhaustifs ni
+systématiques selon la configuration du projet — **ne t'y substitue pas** :
+applique toi-même les règles SEO/GEO/a11y de ce document et de `TOOLBOX.md`
+avant de livrer. Un build cassé **bloque le publish**.
 
 ## 5. Ce que tu as sous la main
 

@@ -56,6 +56,7 @@ export function ListSkeleton({ rows = 5 }: { rows?: number }) {
   return (
     <div className="card divide-y divide-neutral-100" aria-hidden="true">
       {Array.from({ length: rows }).map((_, i) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: skeleton statique (aria-hidden), jamais réordonné
         <div key={i} className="flex items-center justify-between gap-4 p-4">
           <div className="min-w-0 flex-1 space-y-2">
             <Skeleton className="h-4 w-40" />
@@ -76,6 +77,7 @@ export function ProductGridSkeleton({ count = 8 }: { count?: number }) {
       aria-hidden="true"
     >
       {Array.from({ length: count }).map((_, i) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: skeleton statique (aria-hidden), jamais réordonné
         <div key={i} className="space-y-2">
           <Skeleton className="aspect-square w-full" />
           <Skeleton className="h-4 w-3/4" />
@@ -112,6 +114,7 @@ export function CartSkeleton() {
     <div className="card p-5" aria-hidden="true">
       <div className="space-y-3">
         {Array.from({ length: 3 }).map((_, i) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: skeleton statique (aria-hidden), jamais réordonné
           <div key={i} className="flex justify-between">
             <Skeleton className="h-4 w-48" />
             <Skeleton className="h-4 w-16" />

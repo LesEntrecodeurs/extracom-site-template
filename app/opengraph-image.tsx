@@ -10,7 +10,7 @@ export const contentType = 'image/png';
 
 export default async function OpengraphImage() {
   let name = 'Boutique';
-  let tagline = 'Commande en ligne pour les professionnels';
+  const tagline = 'Commande en ligne pour les professionnels';
   try {
     const ctx = await getContextAction();
     name = ctx.branding?.name ?? ctx.shopName ?? name;

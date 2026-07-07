@@ -1,0 +1,92 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.5.2/schema.json",
+	"css": {
+		"parser": {
+			"tailwindDirectives": true
+		}
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"preset": "recommended",
+			"style": {
+				"noNonNullAssertion": "off",
+				"noRestrictedGlobals": {
+					"level": "error",
+					"options": {
+						"deniedGlobals": {
+							"fetch": "Commerce = uniquement le kit (@extracom/site-kit/server ou /react). Jamais de fetch direct vers une URL — voir AGENTS.md règle dure n°1.",
+							"XMLHttpRequest": "Commerce = uniquement le kit (@extracom/site-kit/server ou /react). Jamais d'appel réseau direct — voir AGENTS.md règle dure n°1."
+						}
+					}
+				},
+				"noRestrictedImports": {
+					"level": "error",
+					"options": {
+						"paths": {
+							"axios": "Commerce = uniquement le kit (@extracom/site-kit/server ou /react). Pas de client HTTP direct — voir AGENTS.md règle dure n°1.",
+							"node-fetch": "Commerce = uniquement le kit (@extracom/site-kit/server ou /react). Pas de client HTTP direct — voir AGENTS.md règle dure n°1.",
+							"cross-fetch": "Commerce = uniquement le kit (@extracom/site-kit/server ou /react). Pas de client HTTP direct — voir AGENTS.md règle dure n°1.",
+							"isomorphic-fetch": "Commerce = uniquement le kit (@extracom/site-kit/server ou /react). Pas de client HTTP direct — voir AGENTS.md règle dure n°1.",
+							"ky": "Commerce = uniquement le kit (@extracom/site-kit/server ou /react). Pas de client HTTP direct — voir AGENTS.md règle dure n°1.",
+							"got": "Commerce = uniquement le kit (@extracom/site-kit/server ou /react). Pas de client HTTP direct — voir AGENTS.md règle dure n°1."
+						}
+					}
+				}
+			},
+			"suspicious": {
+				"noUnknownAtRules": "off"
+			},
+			"security": {
+				"noDangerouslySetInnerHtml": "error"
+			}
+		}
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "space",
+		"indentWidth": 2,
+		"lineWidth": 100
+	},
+	"javascript": {
+		"formatter": {
+			"quoteStyle": "single"
+		}
+	},
+	"assist": {
+		"actions": {
+			"source": {
+				"organizeImports": "on"
+			}
+		}
+	},
+	"files": {
+		"includes": [
+			"**/*.js",
+			"**/*.ts",
+			"**/*.tsx",
+			"**/*.jsx",
+			"**/*.json",
+			"**/*.css",
+			"!**/.next",
+			"!**/node_modules",
+			"!**/vendor",
+			"!**/dist",
+			"!**/out",
+			"!**/tsconfig.tsbuildinfo",
+			"!components/ui"
+		]
+	},
+	"overrides": [
+		{
+			"includes": ["components/site/JsonLd.tsx"],
+			"linter": {
+				"rules": {
+					"security": {
+						"noDangerouslySetInnerHtml": "off"
+					}
+				}
+			}
+		}
+	]
+}
